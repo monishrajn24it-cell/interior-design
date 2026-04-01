@@ -2,8 +2,8 @@ from fastapi import APIRouter, File, UploadFile, Form, HTTPException
 from typing import Optional
 import json
 
-from ml.vision import analyze_room_mock
-from ml.generation import generate_designs_mock
+from ml.vision import analyze_room, analyze_room_mock
+from ml.generation import generate_designs
 from ml.layout_csp import optimize_layout_mock
 from ml.budget_regression import predict_budget_mock
 
@@ -23,23 +23,30 @@ async def upload_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/analyze-room")
-async def analyze_room(session_id: str = Form(...)):
+async def analyze_room_endpoint(session_id: str = Form(...)):
     if session_id not in session_data:
         raise HTTPException(status_code=404, detail="Session not found")
     
     image_data = session_data[session_id]["image"]
-    result = await analyze_room_mock(image_data)
+    # Use the real ML analyzer (which uses the Kaggle model logic)
+    result = await analyze_room(image_data)
     
     session_data[session_id]["analysis"] = result
     return result
 
 @router.post("/generate-designs")
-async def generate_designs(session_id: str = Form(...), style: str = Form("modern"), intensity: int = Form(50)):
+async def generate_designs_endpoint(
+    session_id: str = Form(...), 
+    style: str = Form("modern"), 
+    prompt: Optional[str] = Form(None),
+    intensity: int = Form(50)
+):
     if session_id not in session_data:
         raise HTTPException(status_code=404, detail="Session not found")
         
     image_data = session_data[session_id]["image"]
-    designs = await generate_designs_mock(image_data, style, intensity)
+    # Generate 3 variations to save time
+    designs = await generate_designs(image_data, style, prompt, intensity, num_variations=3)
     
     session_data[session_id]["designs"] = designs
     return {"status": "success", "count": len(designs), "designs": designs}
@@ -60,7 +67,11 @@ async def predict_budget(session_id: str = Form(...), style: str = Form("modern"
     if session_id not in session_data:
         raise HTTPException(status_code=404, detail="Session not found")
         
-    budget = await predict_budget_mock({"style": style})
+    analysis = session_data[session_id].get("analysis", {})
+    room_features = analysis.get("room_features", {})
+    area_sqft = room_features.get("area_estimate_sqft", 150)
+    
+    budget = await predict_budget_mock({"style": style, "area_sqft": area_sqft})
     
     session_data[session_id]["budget"] = budget
     return budget

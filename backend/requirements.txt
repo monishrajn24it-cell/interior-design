@@ -1,8 +1,16 @@
 fastapi
 uvicorn[standard]
 python-multipart
-# We are starting with mock placeholders for the ML part:
-# torch
-# torchvision
-# opencv-python
-# scikit-learn
+tensorflow
+numpy
+Pillow
+scikit-learn
+h5py
+torch
+diffusers
+transformers
+accelerate
+controlnet_aux
+opencv-python
+python-dotenv
+requests

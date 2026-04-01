@@ -4,6 +4,7 @@ import { Sparkles, SlidersHorizontal } from 'lucide-react';
 const ControlPanel = ({ onGenerate, isProcessing }) => {
   const [style, setStyle] = useState('modern');
   const [intensity, setIntensity] = useState(50);
+  const [prompt, setPrompt] = useState('');
 
   const styles = [
     { id: 'modern', label: 'Modern' },
@@ -40,6 +41,16 @@ const ControlPanel = ({ onGenerate, isProcessing }) => {
       </div>
 
       <div className="space-y-3">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Style Prompt (Optional)</label>
+        <textarea
+          placeholder="e.g., Modern minimalist living room with warm lighting and wooden accents"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="w-full h-24 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[var(--input-bg)] text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none resize-none"
+        />
+      </div>
+
+      <div className="space-y-3">
         <div className="flex justify-between">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">AI Creativity</label>
           <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{intensity}%</span>
@@ -56,7 +67,7 @@ const ControlPanel = ({ onGenerate, isProcessing }) => {
       </div>
 
       <button
-        onClick={() => onGenerate({ style, intensity })}
+        onClick={() => onGenerate({ style, intensity, prompt })}
         disabled={isProcessing}
         className={`w-full py-3.5 mt-2 rounded-xl text-white font-bold text-shadow flex items-center justify-center gap-2 transform transition-all 
           ${isProcessing 
@@ -71,7 +82,7 @@ const ControlPanel = ({ onGenerate, isProcessing }) => {
           </>
         ) : (
           <>
-            <Sparkles size={20} /> Generate 50+ Designs
+            <Sparkles size={20} /> Generate Designs
           </>
         )}
       </button>

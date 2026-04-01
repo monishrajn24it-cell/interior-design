@@ -4,9 +4,9 @@ const DesignGallery = ({ designs, isLoading }) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <h3 className="text-xl font-bold mb-4">Generating 50+ Variations...</h3>
+        <h3 className="text-xl font-bold mb-4">Generating Variations...</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <div key={i} className="rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse h-64 w-full"></div>
           ))}
         </div>

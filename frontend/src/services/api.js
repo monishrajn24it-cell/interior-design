@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = `http://${window.location.hostname}:8000/api`;
 
 export const uploadImage = async (file) => {
   const formData = new FormData();
@@ -18,11 +18,12 @@ export const analyzeRoom = async (sessionId) => {
   return response.data;
 };
 
-export const generateDesigns = async (sessionId, style, intensity) => {
+export const generateDesigns = async (sessionId, style, intensity, prompt) => {
   const formData = new FormData();
   formData.append('session_id', sessionId);
   formData.append('style', style);
   formData.append('intensity', intensity);
+  if (prompt) formData.append('prompt', prompt);
   const response = await axios.post(`${API_BASE_URL}/generate-designs`, formData);
   return response.data;
 };

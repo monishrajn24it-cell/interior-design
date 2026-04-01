@@ -12,11 +12,17 @@ const BudgetInsights = ({ budget, isLoading }) => {
   if (!budget) return null;
 
   const getCategoryColor = (cat) => {
-    switch(cat.toLowerCase()) {
-      case 'low': return 'text-green-500 bg-green-500/10';
-      case 'medium': return 'text-yellow-500 bg-yellow-500/10';
-      case 'premium': return 'text-rose-500 bg-rose-500/10';
-      default: return 'text-primary-500 bg-primary-500/10';
+    switch((cat || '').toLowerCase()) {
+      case 'low': 
+      case 'budget': 
+        return 'text-green-500 bg-green-500/10';
+      case 'medium': 
+      case 'mid-range': 
+        return 'text-yellow-500 bg-yellow-500/10';
+      case 'premium': 
+        return 'text-rose-500 bg-rose-500/10';
+      default: 
+        return 'text-primary-500 bg-primary-500/10';
     }
   };
 
@@ -32,7 +38,7 @@ const BudgetInsights = ({ budget, isLoading }) => {
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Estimated Base Cost</p>
             <h4 className="text-4xl font-extrabold text-[var(--text-color)]">
-              ${budget.estimated_cost_usd.toLocaleString()}
+              ${(budget.estimated_total_usd || budget.estimated_cost_usd || 0).toLocaleString()}
             </h4>
           </div>
 
@@ -40,13 +46,13 @@ const BudgetInsights = ({ budget, isLoading }) => {
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Classification</span>
               <span className={`text-sm font-bold px-2 py-0.5 rounded mt-1 inline-block w-max ${getCategoryColor(budget.budget_category)}`}>
-                {budget.budget_category} Tier
+                {budget.budget_category || 'Unknown'} Tier
               </span>
             </div>
             <div className="flex flex-col text-right">
               <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Confidence Interval</span>
               <span className="text-sm font-medium mt-1">
-                ${budget.confidence_interval[0].toLocaleString()} - ${budget.confidence_interval[1].toLocaleString()}
+                ${(budget.confidence_interval?.[0] || ((budget.estimated_total_usd || 0) * 0.9)).toLocaleString()} - ${(budget.confidence_interval?.[1] || ((budget.estimated_total_usd || 0) * 1.1)).toLocaleString()}
               </span>
             </div>
           </div>
